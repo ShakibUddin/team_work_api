@@ -4,6 +4,8 @@ const port = 3000;
 const cors = require("cors");
 const db = require("./models");
 const taskRouter = require("./routes/task");
+const userRouter = require("./routes/user");
+const verifyToken = require("./middlewares/auth");
 
 app.use(cors());
 app.use(express.json());
@@ -15,7 +17,8 @@ app.listen(port, () => {
   });
 });
 
-app.use("/tasks", taskRouter);
+app.use("/tasks", verifyToken, taskRouter);
+app.use("/user", userRouter);
 app.use("/", (req, res) => {
-  res.send("Hello");
+  return res.send("Hello");
 });
