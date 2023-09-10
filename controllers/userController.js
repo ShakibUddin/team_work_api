@@ -76,9 +76,12 @@ module.exports = {
               },
               process.env.TOKEN_KEY,
               {
-                expiresIn: "20s",
+                expiresIn: process.env.TOKEN_EXIPRATION_TIME,
               }
             );
+            const expirationTimestamp =
+              Math.floor(Date.now() / 1000) +
+              process.env.TOKEN_EXIPRATION_TIME.split("s")[0];
             return res.status(201).json({
               error: false,
               message: "Login is successful",
@@ -88,6 +91,8 @@ module.exports = {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 token,
+                expiresIn: process.env.TOKEN_EXIPRATION_TIME,
+                expirationTime: expirationTimestamp,
               },
             });
           } else {
@@ -108,6 +113,21 @@ module.exports = {
     } catch (err) {
       return res.status(500).send({
         error: true,
+        message: err.message,
+        data: null,
+      });
+    }
+  },
+  logoutUser: async (req, res) => {
+    try {
+      return res.status(200).send({
+        error: true,
+        message: "Logged out successfully",
+        data: null,
+      });
+    } catch (err) {
+      return res.status(500).send({
+        error: false,
         message: err.message,
         data: null,
       });
