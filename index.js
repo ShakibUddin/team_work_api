@@ -6,6 +6,7 @@ const db = require("./models");
 const taskRouter = require("./routes/task");
 const userRouter = require("./routes/user");
 const verifyToken = require("./middlewares/auth");
+const projectRouter = require("./routes/project");
 
 app.use(cors());
 app.use(express.json());
@@ -17,8 +18,9 @@ app.listen(port, () => {
   });
 });
 
-app.use("/tasks", verifyToken, taskRouter);
+app.use("/task", verifyToken, taskRouter);
 app.use("/user", userRouter);
+app.use("/project", projectRouter);
 app.use("/", (req, res) => {
   return res.send("Hello");
 });
