@@ -3,7 +3,7 @@ const {
   getAllProjects,
   createProject,
   updateProject,
-  getProjectById,
+  getProjectByOwnerId,
 } = require("../controllers/projectController");
 
 const projectRouter = express.Router();
@@ -11,6 +11,6 @@ const projectRouter = express.Router();
 projectRouter.get("/all", getAllProjects);
 projectRouter.post("/create", createProject);
 projectRouter.put("/update", updateProject);
-projectRouter.get("/details", getProjectById);
+projectRouter.get("/details", getProjectByOwnerId);
 
 module.exports = projectRouter;

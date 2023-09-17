@@ -7,11 +7,13 @@ module.exports = {
       {
         title: "Project A",
         description: "Project Desc A",
+        ownerId: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         title: "Project B",
+        ownerId: 2,
         description: "Project Desc B",
         createdAt: new Date(),
         updatedAt: new Date(),

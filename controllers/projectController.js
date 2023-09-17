@@ -18,20 +18,20 @@ module.exports = {
     }
   },
 
-  getProjectById: async (req, res) => {
+  getProjectByOwnerId: async (req, res) => {
     try {
-      const { id } = req.query;
-      const project = await Project.findByPk(id);
+      const { ownerId } = req.query;
+      const project = await Project.findAll({ where: { ownerId } });
       if (project) {
         return res.status(200).json({
           error: false,
-          message: "Project found with id " + id,
+          message: "Project found with ownerId " + ownerId,
           data: project,
         });
       } else {
         return res.status(404).json({
           error: true,
-          message: "No project found with id " + id,
+          message: "No project found with ownerId " + ownerId,
           data: null,
         });
       }
@@ -47,7 +47,7 @@ module.exports = {
 
   createProject: async (req, res) => {
     try {
-      const { title, description } = req.body;
+      const { title, description, ownerId } = req.body;
       const existingProject = await Project.findOne({ where: { title } });
       if (existingProject) {
         return res.status(409).send({
@@ -56,7 +56,7 @@ module.exports = {
           data: null,
         });
       } else {
-        const project = await Project.create({ title, description });
+        const project = await Project.create({ title, description, ownerId });
         if (project) {
           return res.status(201).json({
             error: false,
