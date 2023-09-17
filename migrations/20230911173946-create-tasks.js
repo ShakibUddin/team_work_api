@@ -9,6 +9,15 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      projectId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Projects", // name of Target model
+          key: "id", // key in Target model that we're referencing
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       title: {
         type: Sequelize.STRING,
       },
@@ -17,6 +26,9 @@ module.exports = {
       },
       complete: {
         type: Sequelize.BOOLEAN,
+      },
+      status: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
