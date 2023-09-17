@@ -5,10 +5,32 @@ const Project = require("../models/project")(sequelize);
 module.exports = {
   getAllTasks: async (req, res) => {
     try {
-      const tasks = await Task.findAll();
-      return res
-        .status(200)
-        .json({ error: false, message: "All tasks", data: tasks });
+      const { projectId } = req.query;
+      if (!projectId) {
+        return res.status(400).send({
+          error: true,
+          message: "Project id is required",
+          data: null,
+        });
+      }
+      const tasks = await Task.findAll({
+        where: { projectId },
+      });
+      if (tasks.length > 0) {
+        message = "Tasks found with projectId " + projectId;
+        return res.status(200).json({
+          error: false,
+          message,
+          data: tasks,
+        });
+      } else {
+        message = "No tasks found with projectId " + projectId;
+        return res.status(404).json({
+          error: true,
+          message: message,
+          data: null,
+        });
+      }
     } catch (err) {
       console.error(err);
       return res.status(500).send({
@@ -68,7 +90,7 @@ module.exports = {
             data: null,
           });
         }
-      } else {
+      } else if (projectId) {
         tasks = await Task.findAll({
           where: {
             projectId,
@@ -89,6 +111,13 @@ module.exports = {
             data: null,
           });
         }
+      } else {
+        message = "ProjectId or taskId is required";
+        return res.status(400).json({
+          error: false,
+          message,
+          data: tasks,
+        });
       }
     } catch (err) {
       console.error(err);
