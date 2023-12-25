@@ -1,11 +1,28 @@
-const { sequelize } = require("../models");
-const Project = require("../models/project")(sequelize);
-const Status = require("../models/projectStatus")(sequelize);
+const db = require("../models"); // Adjust the path based on your file structure
+const { Project, Task, status } = db;
 
 module.exports = {
   getAllProjects: async (req, res) => {
     try {
-      const projects = await Project.findAll();
+      const projects = await Project.findAll({
+        attributes: [
+          "id",
+          "ownerId",
+          "title",
+          "description",
+          "status",
+          "createdAt",
+          "updatedAt",
+          [db.sequelize.fn("COUNT", db.sequelize.col("Tasks.id")), "taskCount"],
+        ],
+        include: [
+          {
+            model: Task,
+            attributes: [],
+          },
+        ],
+        group: ["Project.id"], // Corrected 'Projects' to 'Project'
+      });
       return res
         .status(200)
         .json({ error: false, message: "All projects", data: projects });
