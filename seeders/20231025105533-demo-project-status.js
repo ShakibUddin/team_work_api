@@ -6,16 +6,19 @@ module.exports = {
     return queryInterface.bulkInsert("ProjectStatus", [
       {
         title: "Pending",
+        color: "#FFB600",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         title: "Ongoing",
+        color: "#FFB600",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         title: "Complete",
+        color: "#0B7A00",
         createdAt: new Date(),
         updatedAt: new Date(),
       },

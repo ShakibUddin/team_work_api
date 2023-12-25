@@ -13,6 +13,7 @@ module.exports = (sequelize) => {
   ProjectStatus.init(
     {
       title: DataTypes.STRING,
+      color: DataTypes.STRING,
     },
     {
       sequelize,
