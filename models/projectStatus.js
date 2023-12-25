@@ -2,7 +2,7 @@
 const { Model } = require("sequelize");
 const { DataTypes } = require("sequelize");
 module.exports = (sequelize) => {
-  class Project extends Model {
+  class ProjectStatus extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -10,17 +10,16 @@ module.exports = (sequelize) => {
      */
     static associate(models) {}
   }
-  Project.init(
+  ProjectStatus.init(
     {
       title: DataTypes.STRING,
-      description: DataTypes.STRING,
-      ownerId: DataTypes.INTEGER,
-      status: DataTypes.INTEGER,
     },
     {
       sequelize,
-      modelName: "Project",
+      modelName: "ProjectStatus",
+      freezeTableName: true, // This is because Sequelize, automatically pluralizes the name of the model for the corresponding database table.
+      //freezeTableName is used to use automatic pluralization
     }
   );
-  return Project;
+  return ProjectStatus;
 };

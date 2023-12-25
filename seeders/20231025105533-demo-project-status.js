@@ -3,18 +3,19 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.bulkInsert("Projects", [
+    return queryInterface.bulkInsert("ProjectStatus", [
       {
-        title: "Project A",
-        description: "Project Desc A",
-        ownerId: 1,
+        title: "Pending",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        title: "Project B",
-        ownerId: 2,
-        description: "Project Desc B",
+        title: "Ongoing",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        title: "Complete",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -22,6 +23,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.bulkDelete("Projects", null, {});
+    return queryInterface.bulkDelete("ProjectStatus", null, {});
   },
 };

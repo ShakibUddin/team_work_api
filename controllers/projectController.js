@@ -1,5 +1,6 @@
 const { sequelize } = require("../models");
 const Project = require("../models/project")(sequelize);
+const Status = require("../models/projectStatus")(sequelize);
 
 module.exports = {
   getAllProjects: async (req, res) => {
@@ -8,6 +9,24 @@ module.exports = {
       return res
         .status(200)
         .json({ error: false, message: "All projects", data: projects });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send({
+        error: true,
+        message: err.message,
+        data: null,
+      });
+    }
+  },
+
+  getAllProjectStatus: async (req, res) => {
+    try {
+      const projectStatus = await Status.findAll();
+      return res.status(200).json({
+        error: false,
+        message: "All project statuses",
+        data: projectStatus,
+      });
     } catch (err) {
       console.error(err);
       return res.status(500).send({

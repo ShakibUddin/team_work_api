@@ -35,8 +35,8 @@ module.exports = {
           delete newUser.password;
           return res.status(201).json({
             error: false,
-            message: "Registration is successful",
-            data: { id: newUser.id, firstName, lastName, email, token },
+            message: "Registration is successful, Please login",
+            data: null,
           });
         } else {
           return res.status(409).send({
