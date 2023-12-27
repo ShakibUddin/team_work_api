@@ -1,5 +1,5 @@
 const db = require("../models"); // Adjust the path based on your file structure
-const { Project, Task, status } = db;
+const { Project, Task, ProjectStatus } = db;
 
 module.exports = {
   getAllProjects: async (req, res) => {
@@ -38,7 +38,7 @@ module.exports = {
 
   getAllProjectStatus: async (req, res) => {
     try {
-      const projectStatus = await Status.findAll();
+      const projectStatus = await ProjectStatus.findAll();
       return res.status(200).json({
         error: false,
         message: "All project statuses",
