@@ -25,13 +25,6 @@ module.exports = {
             email: email.toLowerCase(),
             password: encryptedUserPassword,
           });
-          const token = jwt.sign(
-            { user_id: newUser.id, email, firstName, lastName },
-            process.env.TOKEN_KEY,
-            {
-              expiresIn: "1h",
-            }
-          );
           delete newUser.password;
           return res.status(201).json({
             error: false,
@@ -82,6 +75,19 @@ module.exports = {
             const expirationTimestamp =
               Math.floor(Date.now() / 1000) +
               process.env.TOKEN_EXIPRATION_TIME.split("s")[0];
+            //store tokena and expirationTimeStamp in db
+
+            const result = await User.update(
+              {
+                token,
+                expirationTimestamp,
+              },
+              {
+                where: {
+                  id: user.id,
+                },
+              }
+            );
             return res.status(201).json({
               error: false,
               message: "Login is successful",
@@ -120,11 +126,34 @@ module.exports = {
   },
   logoutUser: async (req, res) => {
     try {
-      return res.status(200).send({
-        error: true,
-        message: "Logged out successfully",
-        data: null,
-      });
+      const { id } = req.query;
+      const user = await User.findOne({ where: { id } });
+      if (user) {
+        const result = await User.update(
+          {
+            token: null,
+            expirationTimestamp: null,
+          },
+          {
+            where: {
+              id: user.id,
+            },
+          }
+        );
+        if (!result.token) {
+          return res.status(200).send({
+            error: true,
+            message: "Logged out successfully",
+            data: null,
+          });
+        }
+      } else {
+        return res.status(404).send({
+          error: true,
+          message: "User not found",
+          data: null,
+        });
+      }
     } catch (err) {
       return res.status(500).send({
         error: false,

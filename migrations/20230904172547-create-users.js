@@ -21,6 +21,14 @@ module.exports = {
       password: {
         type: Sequelize.STRING,
       },
+      token: {
+        type: Sequelize.STRING,
+        defaultValue: null,
+      },
+      expirationTimestamp: {
+        type: Sequelize.STRING,
+        defaultValue: null,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

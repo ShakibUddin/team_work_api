@@ -1,4 +1,4 @@
-const db = require("../models"); // Adjust the path based on your file structure
+const db = require("../models");
 const { Project, Task, ProjectStatus } = db;
 
 module.exports = {

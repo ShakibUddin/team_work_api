@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
+const db = require("../models");
+const { User } = db;
 
 const config = process.env;
 
-const verifyToken = (req, res, next) => {
-  const token =
-    req.body.token || req.query.token || req.headers["Authorization"];
+const verifyToken = async (req, res, next) => {
+  const token = req.headers.authorization;
   if (!token) {
     return res.status(403).send({
       error: true,
@@ -13,12 +14,26 @@ const verifyToken = (req, res, next) => {
     });
   }
   try {
-    const decoded = jwt.verify(token, config.TOKEN_KEY);
-    req.user = decoded;
+    const decoded = jwt.verify(token.split(" ")[1], config.TOKEN_KEY);
+    const userInDB = await User.findOne({ where: { id: decoded.id } });
+    if (
+      decoded &&
+      Object.keys(decoded).length > 0 &&
+      userInDB.dataValues.token &&
+      userInDB.dataValues.token === token.split(" ")[1]
+    ) {
+      req.user = decoded;
+    } else {
+      return res.status(401).send({
+        error: true,
+        message: "Unauthorized access",
+        data: null,
+      });
+    }
   } catch (err) {
     return res.status(401).send({
       error: true,
-      message: "Invalid token",
+      message: "Unauthorized access",
       data: null,
     });
   }
