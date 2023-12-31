@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
       title: DataTypes.STRING,
       description: DataTypes.STRING,
       projectId: DataTypes.INTEGER,
-      status: DataTypes.STRING,
+      statusId: DataTypes.STRING,
     },
     {
       sequelize,

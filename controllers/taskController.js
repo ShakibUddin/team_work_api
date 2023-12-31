@@ -1,6 +1,5 @@
-const { sequelize } = require("../models");
-const Task = require("../models/task")(sequelize);
-const Project = require("../models/project")(sequelize);
+const db = require("../models");
+const { Project, Task, TaskStatus } = db;
 
 module.exports = {
   getAllTasks: async (req, res) => {
@@ -31,6 +30,24 @@ module.exports = {
           data: null,
         });
       }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send({
+        error: true,
+        message: err.message,
+        data: null,
+      });
+    }
+  },
+
+  getAllTaskStatus: async (req, res) => {
+    try {
+      const taskStatus = await TaskStatus.findAll();
+      return res.status(200).json({
+        error: false,
+        message: "All task statuses",
+        data: taskStatus,
+      });
     } catch (err) {
       console.error(err);
       return res.status(500).send({

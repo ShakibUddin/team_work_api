@@ -2,33 +2,18 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Tasks", {
+    await queryInterface.createTable("TaskStatus", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      projectId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Projects", // name of Target model
-          key: "id", // key in Target model that we're referencing
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
       title: {
         type: Sequelize.STRING,
       },
-      description: {
+      color: {
         type: Sequelize.STRING,
-      },
-      complete: {
-        type: Sequelize.BOOLEAN,
-      },
-      statusId: {
-        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
@@ -41,6 +26,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Tasks");
+    await queryInterface.dropTable("TaskStatus");
   },
 };
