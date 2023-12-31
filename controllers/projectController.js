@@ -57,12 +57,31 @@ module.exports = {
   getProjectByOwnerId: async (req, res) => {
     try {
       const { ownerId } = req.query;
-      const project = await Project.findAll({ where: { ownerId } });
-      if (project) {
+      const projects = await Project.findAll({
+        attributes: [
+          "id",
+          "ownerId",
+          "title",
+          "description",
+          "status",
+          "createdAt",
+          "updatedAt",
+          [db.sequelize.fn("COUNT", db.sequelize.col("Tasks.id")), "taskCount"],
+        ],
+        include: [
+          {
+            model: Task,
+            attributes: [],
+          },
+        ],
+        group: ["Project.id"], // Corrected 'Projects' to 'Project'
+        where: { ownerId },
+      });
+      if (projects) {
         return res.status(200).json({
           error: false,
           message: "Project found with ownerId " + ownerId,
-          data: project,
+          data: projects,
         });
       } else {
         return res.status(404).json({
