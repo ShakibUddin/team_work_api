@@ -29,12 +29,6 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        title: "Closed",
-        color: "#808080",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
         title: "Complete",
         color: "#008000",
         createdAt: new Date(),

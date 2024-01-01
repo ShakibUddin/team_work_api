@@ -4,26 +4,16 @@ const { Project, Task, TaskStatus } = db;
 module.exports = {
   getAllTasks: async (req, res) => {
     try {
-      const { projectId } = req.query;
-      if (!projectId) {
-        return res.status(400).send({
-          error: true,
-          message: "Project id is required",
-          data: null,
-        });
-      }
-      const tasks = await Task.findAll({
-        where: { projectId },
-      });
+      const tasks = await Task.findAll();
       if (tasks.length > 0) {
-        message = "Tasks found with projectId " + projectId;
+        message = "Tasks found";
         return res.status(200).json({
           error: false,
           message,
           data: tasks,
         });
       } else {
-        message = "No tasks found with projectId " + projectId;
+        message = "No tasks found";
         return res.status(404).json({
           error: true,
           message: message,
@@ -148,16 +138,16 @@ module.exports = {
   getTaskByProjectId: async (req, res) => {
     try {
       const { projectId } = req.query;
-      const task = await Task.findAll({
+      const tasks = await Task.findAll({
         where: {
           projectId,
         },
       });
-      if (task) {
+      if (tasks) {
         return res.status(200).json({
           error: false,
           message: "Task found with project id " + projectId,
-          data: task,
+          data: tasks,
         });
       } else {
         return res.status(404).json({
@@ -178,7 +168,7 @@ module.exports = {
 
   createTask: async (req, res) => {
     try {
-      const { title, description, projectId } = req.body;
+      const { title, description, projectId, statusId } = req.body;
       const project = await Project.findByPk(projectId);
       if (!project) {
         return res.status(404).json({
@@ -191,7 +181,7 @@ module.exports = {
           title,
           description,
           projectId,
-          status: "INPROGRESS",
+          statusId,
         });
 
         if (task) {
