@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Project, Task, TaskStatus } = db;
+const { Project, Task, TaskStatus, AssignedDeveloper } = db;
 
 module.exports = {
   getAllTasks: async (req, res) => {
@@ -168,28 +168,48 @@ module.exports = {
 
   createTask: async (req, res) => {
     try {
-      const { title, description, projectId, statusId } = req.body;
-      const project = await Project.findByPk(projectId);
-      if (!project) {
-        return res.status(404).json({
+      const { title, description, projectId, statusId, developers } = req.body;
+      if (!title) {
+        return res.status(422).json({
           error: true,
-          message: "No project found with project id " + projectId,
+          message: "Title is required",
+          data: null,
+        });
+      } else if (!projectId) {
+        return res.status(422).json({
+          error: true,
+          message: "Project id is required",
+          data: null,
+        });
+      } else if (!statusId) {
+        return res.status(422).json({
+          error: true,
+          message: "Status id is required",
           data: null,
         });
       } else {
-        const task = await Task.create({
-          title,
-          description,
-          projectId,
-          statusId,
-        });
-
-        if (task) {
-          return res.status(201).json({
-            error: false,
-            message: "Task added successfully",
-            data: task,
+        const project = await Project.findByPk(projectId);
+        if (!project) {
+          return res.status(404).json({
+            error: true,
+            message: "No project found with project id " + projectId,
+            data: null,
           });
+        } else {
+          const task = await Task.create({
+            title,
+            description,
+            projectId,
+            statusId,
+            developers,
+          });
+          if (task) {
+            return res.status(201).json({
+              error: false,
+              message: "Task added successfully",
+              data: task,
+            });
+          }
         }
       }
     } catch (err) {
@@ -205,10 +225,10 @@ module.exports = {
   updateTask: async (req, res) => {
     try {
       const { id } = req.query;
-      if (!req.body.title && !req.body.description && !req.body.complete) {
+      if (!id) {
         return res.status(400).send({
           error: true,
-          message: "Invalid parameters",
+          message: "Task id is required",
           data: null,
         });
       } else {

@@ -13,6 +13,7 @@ module.exports = (sequelize) => {
       description: DataTypes.STRING,
       projectId: DataTypes.INTEGER,
       statusId: DataTypes.STRING,
+      developers: DataTypes.STRING,
     },
     {
       sequelize,

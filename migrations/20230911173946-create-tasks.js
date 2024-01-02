@@ -24,11 +24,11 @@ module.exports = {
       description: {
         type: Sequelize.STRING,
       },
-      complete: {
-        type: Sequelize.BOOLEAN,
-      },
       statusId: {
         type: Sequelize.INTEGER,
+      },
+      developers: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
