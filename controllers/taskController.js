@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Project, Task, TaskStatus, AssignedDeveloper } = db;
+const { Project, Task, TaskStatus, User } = db;
 
 module.exports = {
   getAllTasks: async (req, res) => {
@@ -201,7 +201,7 @@ module.exports = {
             description,
             projectId,
             statusId,
-            developers,
+            developers: JSON.stringify(developers),
           });
           if (task) {
             return res.status(201).json({
