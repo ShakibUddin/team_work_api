@@ -20,6 +20,7 @@ app.listen(port, () => {
 
 app.use("/task", verifyToken, taskRouter);
 app.use("/user", userRouter);
+app.use("/user/all", verifyToken, userRouter);
 app.use("/project", verifyToken, projectRouter);
 app.use("/", (req, res) => {
   return res.send("Hello");

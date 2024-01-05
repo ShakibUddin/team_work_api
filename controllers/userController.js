@@ -162,4 +162,40 @@ module.exports = {
       });
     }
   },
+  getAllUsers: async (req, res) => {
+    try {
+      const users = await User.findAll();
+      if (users.length > 0) {
+        const usersData = users.map((user) => {
+          return {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            avatar: user.avatar || "",
+          };
+        });
+        message = "Users found";
+        return res.status(200).json({
+          error: false,
+          message,
+          data: usersData,
+        });
+      } else {
+        message = "No users found";
+        return res.status(404).json({
+          error: true,
+          message: message,
+          data: null,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send({
+        error: true,
+        message: err.message,
+        data: null,
+      });
+    }
+  },
 };
