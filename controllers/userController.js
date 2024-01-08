@@ -1,8 +1,9 @@
 require("dotenv").config();
-const { sequelize } = require("../models");
+const { sequelize, Sequelize } = require("../models");
 const User = require("../models/user")(sequelize);
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { Op, fn, col } = require("sequelize");
 
 module.exports = {
   createUser: async (req, res) => {
@@ -163,8 +164,19 @@ module.exports = {
     }
   },
   getAllUsers: async (req, res) => {
+    const { searchKey } = req.query;
     try {
-      const users = await User.findAll();
+      const users = await User.findAll({
+        where: {
+          [Op.or]: [
+            { firstName: { [Op.like]: fn("lower", "%" + searchKey + "%") } },
+            { lastName: { [Op.like]: fn("lower", "%" + searchKey + "%") } },
+          ].map((condition) => {
+            const key = Object.keys(condition)[0];
+            return Sequelize.where(fn("lower", col(key)), condition[key]);
+          }),
+        },
+      });
       if (users.length > 0) {
         const usersData = users.map((user) => {
           return {
@@ -183,10 +195,10 @@ module.exports = {
         });
       } else {
         message = "No users found";
-        return res.status(404).json({
+        return res.status(200).json({
           error: true,
           message: message,
-          data: null,
+          data: [],
         });
       }
     } catch (err) {
