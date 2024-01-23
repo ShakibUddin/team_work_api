@@ -6,12 +6,14 @@ const {
   getTaskById,
   getAllTaskStatus,
   getTaskByProjectId,
+  getAllTaskPriorities,
 } = require("../controllers/taskController");
 
 const taskRouter = express.Router();
 
 taskRouter.get("/all", getAllTasks);
 taskRouter.get("/status/all", getAllTaskStatus);
+taskRouter.get("/priorities/all", getAllTaskPriorities);
 taskRouter.post("/create", createTask);
 taskRouter.put("/update", updateTask);
 taskRouter.get("/details", getTaskById);

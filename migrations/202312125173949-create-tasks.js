@@ -24,6 +24,12 @@ module.exports = {
       description: {
         type: Sequelize.TEXT,
       },
+      priorityId: {
+        type: Sequelize.INTEGER,
+      },
+      dueDate: {
+        type: Sequelize.DATE,
+      },
       statusId: {
         type: Sequelize.INTEGER,
       },

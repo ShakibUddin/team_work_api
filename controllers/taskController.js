@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Project, Task, TaskStatus, User } = db;
+const { Project, Task, TaskStatus, TaskPriority } = db;
 
 module.exports = {
   getAllTasks: async (req, res) => {
@@ -37,6 +37,24 @@ module.exports = {
         error: false,
         message: "All task statuses",
         data: taskStatus,
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send({
+        error: true,
+        message: err.message,
+        data: null,
+      });
+    }
+  },
+
+  getAllTaskPriorities: async (req, res) => {
+    try {
+      const taskPriorities = await TaskPriority.findAll();
+      return res.status(200).json({
+        error: false,
+        message: "All task priorities",
+        data: taskPriorities,
       });
     } catch (err) {
       console.error(err);
@@ -135,6 +153,7 @@ module.exports = {
       });
     }
   },
+
   getTaskByProjectId: async (req, res) => {
     try {
       const { projectId } = req.query;
@@ -168,7 +187,15 @@ module.exports = {
 
   createTask: async (req, res) => {
     try {
-      const { title, description, projectId, statusId, developers } = req.body;
+      const {
+        title,
+        description,
+        projectId,
+        statusId,
+        developers,
+        priorityId,
+        dueDate,
+      } = req.body;
       if (!title) {
         return res.status(422).json({
           error: true,
@@ -188,6 +215,18 @@ module.exports = {
           data: null,
         });
       } else {
+        if (priorityId) {
+          const priority = await TaskPriority.findOne({
+            where: { id: priorityId },
+          });
+          if (!priority) {
+            return res.status(400).json({
+              error: true,
+              message: "Priority does not exist",
+              data: null,
+            });
+          }
+        }
         const project = await Project.findByPk(projectId);
         if (!project) {
           return res.status(404).json({
@@ -202,6 +241,8 @@ module.exports = {
             projectId,
             statusId,
             developers: JSON.stringify(developers),
+            priorityId,
+            dueDate,
           });
           if (task) {
             return res.status(201).json({
@@ -232,25 +273,39 @@ module.exports = {
           data: null,
         });
       } else {
+        //check if task with given id exists
         const task = await Task.findByPk(id);
-        if (task === null) {
+        if (!task) {
           return res.status(404).json({
             error: true,
             message: "No task found with id " + id,
             data: null,
           });
-        } else {
-          const task = await Task.update(req.body, {
-            where: {
-              id,
-            },
-          });
-          return res.status(200).json({
-            error: false,
-            message: "Task updated successfully",
-            data: null,
-          });
         }
+        //check if task priority id exists
+        if (req.body.priorityId) {
+          const priority = await TaskPriority.findOne({
+            where: { id: req.body.priorityId },
+          });
+          if (!priority) {
+            return res.status(400).json({
+              error: true,
+              message: "Priority does not exist",
+              data: null,
+            });
+          }
+        }
+        //update the task
+        await Task.update(req.body, {
+          where: {
+            id,
+          },
+        });
+        return res.status(200).json({
+          error: false,
+          message: "Task updated successfully",
+          data: task,
+        });
       }
     } catch (err) {
       console.error(err);

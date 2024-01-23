@@ -14,6 +14,8 @@ module.exports = (sequelize) => {
       projectId: DataTypes.INTEGER,
       statusId: DataTypes.STRING,
       developers: DataTypes.STRING,
+      priorityId: DataTypes.INTEGER,
+      dueDate: DataTypes.DATE,
     },
     {
       sequelize,

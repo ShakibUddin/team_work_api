@@ -1,5 +1,7 @@
 "use strict";
 
+const dayjs = require("dayjs");
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -9,6 +11,8 @@ module.exports = {
         description: "Task Desc A",
         projectId: 1,
         statusId: 1,
+        priorityId: 1,
+        dueDate: dayjs().add(7, "days").format("YYYY-MM-DD"),
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -17,6 +21,8 @@ module.exports = {
         description: "Task Desc B",
         projectId: 1,
         statusId: 2,
+        priorityId: 2,
+        dueDate: dayjs().add(3, "days").format("YYYY-MM-DD"),
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -25,6 +31,8 @@ module.exports = {
         description: "Task Desc C",
         projectId: 2,
         statusId: 3,
+        priorityId: 3,
+        dueDate: dayjs().add(5, "days").format("YYYY-MM-DD"),
         createdAt: new Date(),
         updatedAt: new Date(),
       },
