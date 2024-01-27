@@ -18,7 +18,7 @@ module.exports = {
       },
       {
         title: "In review",
-        color: "#FFFF00",
+        color: "#17D6DC",
         createdAt: new Date(),
         updatedAt: new Date(),
       },

@@ -12,13 +12,13 @@ module.exports = {
       },
       {
         title: "Medium",
-        color: "#FFFF00",
+        color: "#0A7BDA",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         title: "Low",
-        color: "#00FF00",
+        color: "#DCC417",
         createdAt: new Date(),
         updatedAt: new Date(),
       },
