@@ -24,8 +24,9 @@ module.exports = {
       description: {
         type: Sequelize.TEXT,
       },
-      status: {
+      statusId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,

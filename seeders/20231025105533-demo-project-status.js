@@ -12,7 +12,7 @@ module.exports = {
       },
       {
         title: "Ongoing",
-        color: "#FFB600",
+        color: "#1578CB",
         createdAt: new Date(),
         updatedAt: new Date(),
       },

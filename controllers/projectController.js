@@ -10,7 +10,7 @@ module.exports = {
           "ownerId",
           "title",
           "description",
-          "status",
+          "statusId",
           "createdAt",
           "updatedAt",
           [db.sequelize.fn("COUNT", db.sequelize.col("Tasks.id")), "taskCount"],
@@ -63,7 +63,7 @@ module.exports = {
           "ownerId",
           "title",
           "description",
-          "status",
+          "statusId",
           "createdAt",
           "updatedAt",
           [db.sequelize.fn("COUNT", db.sequelize.col("Tasks.id")), "taskCount"],
@@ -102,7 +102,32 @@ module.exports = {
 
   createProject: async (req, res) => {
     try {
-      const { title, description, ownerId } = req.body;
+      const { title, description, ownerId, statusId } = req.body;
+      if (!title) {
+        return res.status(400).json({
+          error: true,
+          message: "Project title is required",
+          data: null,
+        });
+      } else if (!description) {
+        return res.status(400).json({
+          error: true,
+          message: "Project description is required",
+          data: null,
+        });
+      } else if (!ownerId) {
+        return res.status(400).json({
+          error: true,
+          message: "Project owner ID is required",
+          data: null,
+        });
+      } else if (!statusId) {
+        return res.status(400).json({
+          error: true,
+          message: "Project status is required",
+          data: null,
+        });
+      }
       const existingProject = await Project.findOne({ where: { title } });
       if (existingProject) {
         return res.status(409).send({
@@ -111,7 +136,12 @@ module.exports = {
           data: null,
         });
       } else {
-        const project = await Project.create({ title, description, ownerId });
+        const project = await Project.create({
+          title,
+          description,
+          ownerId,
+          statusId,
+        });
         if (project) {
           return res.status(201).json({
             error: false,
