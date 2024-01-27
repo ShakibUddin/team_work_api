@@ -189,6 +189,8 @@ module.exports = {
     try {
       const {
         title,
+        taskTitles,
+        bulkCreate,
         description,
         projectId,
         statusId,
@@ -196,10 +198,17 @@ module.exports = {
         priorityId,
         dueDate,
       } = req.body;
-      if (!title) {
+      if (!bulkCreate && !title) {
         return res.status(422).json({
           error: true,
           message: "Title is required",
+          data: null,
+        });
+      }
+      if (bulkCreate && !taskTitles) {
+        return res.status(422).json({
+          error: true,
+          message: "Titles are required",
           data: null,
         });
       } else if (!projectId) {
@@ -235,21 +244,40 @@ module.exports = {
             data: null,
           });
         } else {
-          const task = await Task.create({
-            title,
-            description,
-            projectId,
-            statusId,
-            developers: JSON.stringify(developers),
-            priorityId,
-            dueDate,
-          });
-          if (task) {
+          if (bulkCreate) {
+            taskTitles.split("\n").forEach(async (taskTitle) => {
+              const task = await Task.create({
+                title: taskTitle,
+                description,
+                projectId,
+                statusId,
+                developers: JSON.stringify(developers),
+                priorityId,
+                dueDate,
+              });
+            });
             return res.status(201).json({
               error: false,
-              message: "Task added successfully",
-              data: task,
+              message: "Tasks added successfully",
+              data: null,
             });
+          } else {
+            const task = await Task.create({
+              title,
+              description,
+              projectId,
+              statusId,
+              developers: JSON.stringify(developers),
+              priorityId,
+              dueDate,
+            });
+            if (task) {
+              return res.status(201).json({
+                error: false,
+                message: "Task added successfully",
+                data: task,
+              });
+            }
           }
         }
       }
