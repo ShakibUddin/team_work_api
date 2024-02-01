@@ -7,6 +7,8 @@ const {
   getAllTaskStatus,
   getTaskByProjectId,
   getAllTaskPriorities,
+  addComment,
+  getCommentByTaskId,
 } = require("../controllers/taskController");
 
 const taskRouter = express.Router();
@@ -18,5 +20,7 @@ taskRouter.post("/create", createTask);
 taskRouter.put("/update", updateTask);
 taskRouter.get("/details", getTaskById);
 taskRouter.get("/project", getTaskByProjectId);
+taskRouter.post("/comment/add", addComment);
+taskRouter.get("/comment", getCommentByTaskId);
 
 module.exports = taskRouter;

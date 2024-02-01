@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Project, Task, TaskStatus, TaskPriority } = db;
+const { Project, Task, TaskStatus, TaskPriority, Comment, User } = db;
 
 module.exports = {
   getAllTasks: async (req, res) => {
@@ -333,6 +333,108 @@ module.exports = {
           error: false,
           message: "Task updated successfully",
           data: task,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send({
+        error: true,
+        message: err.message,
+        data: null,
+      });
+    }
+  },
+
+  addComment: async (req, res) => {
+    try {
+      const { comment, taskId, userId } = req.body;
+      if (!comment) {
+        return res.status(422).json({
+          error: true,
+          message: "Comment is required",
+          data: null,
+        });
+      } else if (!taskId) {
+        return res.status(422).json({
+          error: true,
+          message: "Task id is required",
+          data: null,
+        });
+      } else if (!userId) {
+        return res.status(422).json({
+          error: true,
+          message: "User is required",
+          data: null,
+        });
+      } else {
+        const task = await Task.findByPk(taskId);
+        if (!task) {
+          return res.status(404).json({
+            error: true,
+            message: "No task found with task id " + taskId,
+            data: null,
+          });
+        }
+        const commentInTask = await Comment.create({
+          comment,
+          taskId,
+          userId,
+        });
+        if (commentInTask) {
+          return res.status(201).json({
+            error: false,
+            message: "Comment added successfully",
+            data: comment,
+          });
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send({
+        error: true,
+        message: err.message,
+        data: null,
+      });
+    }
+  },
+
+  getCommentByTaskId: async (req, res) => {
+    try {
+      const { taskId } = req.query;
+      if (!taskId) {
+        return res.status(404).send({
+          error: true,
+          message: "Task id is required",
+          data: null,
+        });
+      }
+      const task = await Task.findByPk(taskId);
+      if (!task) {
+        return res.status(404).send({
+          error: true,
+          message: "There is no task with this id",
+          data: null,
+        });
+      }
+      const comments = await Comment.findAll({ where: { taskId } });
+      const commentData = [];
+      for (let i = 0; i < comments.length; ++i) {
+        const user = await User.findByPk(comments[i].userId);
+        if (user) {
+          commentData.push({
+            ...comments[i].toJSON(),
+            userName: user?.firstName + " " + user?.lastName,
+          });
+        }
+      }
+      if (commentData) {
+        return res.status(200).send({
+          error: true,
+          message:
+            comments.length > 0
+              ? "Comments found"
+              : "This task has no comments yet",
+          data: commentData,
         });
       }
     } catch (err) {
