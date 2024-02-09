@@ -1,4 +1,6 @@
+const chalk = require("chalk");
 const db = require("../models");
+
 const { Project, Task, TaskStatus, TaskPriority, Comment, User } = db;
 
 module.exports = {
@@ -163,10 +165,24 @@ module.exports = {
         },
       });
       if (tasks) {
+        const tasksWithComments = [];
+        for (let i = 0; i < tasks.length; ++i) {
+          const comments = await Comment.findAll({
+            where: { taskId: tasks[i].id },
+          });
+          if (comments.length > 0) {
+            tasksWithComments.push({
+              ...tasks[i].toJSON(),
+              comments,
+            });
+          } else {
+            tasksWithComments.push({ ...tasks[i].toJSON(), comments: [] });
+          }
+        }
         return res.status(200).json({
           error: false,
           message: "Task found with project id " + projectId,
-          data: tasks,
+          data: tasksWithComments,
         });
       } else {
         return res.status(404).json({
