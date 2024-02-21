@@ -1,6 +1,7 @@
 const db = require("../models");
-const { Project, Task, ProjectStatus } = db;
-
+const { sequelize, Sequelize } = require("../models");
+const { Project, Task, ProjectStatus, Invitation, User } = db;
+const { Op, fn, col } = require("sequelize");
 module.exports = {
   getAllProjects: async (req, res) => {
     try {
@@ -189,6 +190,86 @@ module.exports = {
             data: null,
           });
         }
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send({
+        error: true,
+        message: err.message,
+        data: null,
+      });
+    }
+  },
+
+  createInvitation: async (req, res) => {
+    try {
+      const { projectId, userId } = req.body;
+      await Invitation.create({
+        projectId,
+        userId,
+      });
+      return res.status(201).json({
+        error: false,
+        message: "Invitation sent successfully",
+        data: null,
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).send({
+        error: true,
+        message: err.message,
+        data: null,
+      });
+    }
+  },
+
+  getUsersToInviteToProject: async (req, res) => {
+    const { searchKey, limit = 10, projectId } = req.query;
+    try {
+      const users = await User.findAll({
+        where: {
+          [Op.or]: [
+            { firstName: { [Op.like]: fn("lower", "%" + searchKey + "%") } },
+            { lastName: { [Op.like]: fn("lower", "%" + searchKey + "%") } },
+          ].map((condition) => {
+            const key = Object.keys(condition)[0];
+            return Sequelize.where(fn("lower", col(key)), condition[key]);
+          }),
+        },
+        limit: parseInt(limit),
+      });
+
+      if (users.length > 0) {
+        const usersDataPromises = users.map(async (user) => {
+          const invitationExists = await Invitation.findOne({
+            where: {
+              projectId: projectId,
+              userId: user?.id,
+            },
+          });
+          return {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            avatar: user.avatar || "",
+            invited: Boolean(invitationExists),
+          };
+        });
+        const usersData = await Promise.all(usersDataPromises);
+        message = "Users found";
+        return res.status(200).json({
+          error: false,
+          message,
+          data: usersData,
+        });
+      } else {
+        message = "No users found";
+        return res.status(200).json({
+          error: true,
+          message: message,
+          data: [],
+        });
       }
     } catch (err) {
       console.error(err);

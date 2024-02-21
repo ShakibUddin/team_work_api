@@ -164,7 +164,7 @@ module.exports = {
     }
   },
   getAllUsers: async (req, res) => {
-    const { searchKey } = req.query;
+    const { searchKey, limit = 10 } = req.query;
     try {
       const users = await User.findAll({
         where: {
@@ -176,7 +176,9 @@ module.exports = {
             return Sequelize.where(fn("lower", col(key)), condition[key]);
           }),
         },
+        limit: parseInt(limit),
       });
+
       if (users.length > 0) {
         const usersData = users.map((user) => {
           return {
